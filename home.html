@@ -1,0 +1,76 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+%matplotlib inline
+In [2]:
+#from sklearn.datasets import load_boston
+#boston_dataset = load_boston()
+from sklearn.datasets import fetch_california_housing
+housing = fetch_california_housing()
+:
+housing.keys()
+Out[3]: In [4]:
+cali = pd.DataFrame(housing.data, columns=housing.feature_names)
+cali.head()
+cali['PRICE'] = housing.target
+In [6]:
+cali
+cali.isnull().sum()
+correlation_matrix = cali.corr().round(2)
+sns.heatmap(data=correlation_matrix, annot=True)
+Axes: >
+
+plt.figure(figsize=(10, 5))
+features = ['MedInc']
+target = cali['PRICE']
+for i, col in enumerate(features):
+ plt.subplot(1, len(features) , i+1)
+ x = cali[col]
+ y = target
+ plt.scatter(x, y, marker='o')
+ plt.title(col)
+ plt.xlabel(col)
+ plt.ylabel('PRICE'
+
+X = pd.DataFrame(np.c_[cali['MedInc']], columns = ['MedInc'])
+Y = cali['PRICE']
+from sklearn.model_selection import train_test_split
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state=101)
+print(X_train.shape)
+print(X_test.shape)
+print(Y_train.shape)
+print(Y_test.shape)
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+lin_model = LinearRegression()
+lin_model.fit(X_train, Y_train)
+▾ LinearRegression
+LinearRegression()
+
+
+y_train_predict = lin_model.predict(X_train)
+rmse = (np.sqrt(mean_squared_error(Y_train, y_train_predict)))
+r2 = r2_score(Y_train, y_train_predict)
+print("The model performance for training set")
+print("--------------------------------------")
+print('RMSE is {}'.format(rmse))
+print('R2 score is {}'.format(r2))
+print("\n")
+# model evaluation for testing set
+y_test_predict = lin_model.predict(X_test)
+# root mean square error of the model
+rmse = (np.sqrt(mean_squared_error(Y_test, y_test_predict)))
+# r-squared score of the model
+r2 = r2_score(Y_test, y_test_predict)
+print("The model performance for testing set")
+print("--------------------------------------")
+print('RMSE is {}'.format(rmse))
+print('R2 score is {}'.format(r2))
+
+plt.figure(figsize=(20,5))
+plt.scatter(Y_test, y_test_predict)
+#plt.xlabel('Y test data')
+#plt.ylabel('Y test predict data')
+#plt.title("Y test value vs Y Predict values")
+plt.show()
